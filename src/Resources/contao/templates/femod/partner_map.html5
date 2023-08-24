@@ -1,0 +1,120 @@
+<div class="col-lg-12 map mt-5" id="haas-partner-map">
+  <div class="row justify-content-end">
+    <div class="map-wrapper">
+      <div id="map"></div>
+    </div>
+    <div class="col-lg-3 col-md-4 pb-5 map-form <?= \Input::post('partner-type') ? 'after-search' : ''; ?>">
+      <?php if(!(\Input::post('partner-type'))):?>
+      <p class="mt-4" style="color:#c31632;">So finden Sie Ihren Handler</p>
+      <p class="mt-2">Bitte wählen Sie Ihren Standort und finden Sie einen
+        Haas+Sohn-Vertriebspartner in Ihrer Nähe.<br>Geräte der Designlinie »PREMIUM« sind ausschließlich bei
+        zertifizierten »PREMIUM«-Partnern erhältlich.<br>
+        Bei Fragen zu unseren Produkten oder Service-Anfragen wenden Sie sich bitte exklusiv an einen unserer
+        Vertriebspartner.</p>
+      <div id="partner-details" class="partner-details mt-3"></div>
+      <?php endif; ?>
+      <?php if(!(\Input::post('partner-type'))):?>
+      <form method="post" action="#haas-partner-map" class="haas-partner-map mb-3">
+        <select id="partner-type" class="form-control" name="partner-type">
+          <option value="a" <?=(\Input::post('partner-type')=='a' ? ' selected' : '' ) ?>>Haas+Sohn Partner</option>
+          <option value="p" <?=(\Input::post('partner-type')=='p' ? ' selected' : '' ) ?>>Haas+Sohn Premium Partner
+          </option>
+        </select>
+        <input type="text" name="plz" maxlength="10" class='plz' placeholder="PLZ" <?=(\Input::post('plz') ? ' value="' .
+          \Input::post('plz') . '"' : '' ) ?>>
+        <input type="text" name="city" placeholder="Ort" <?=(\Input::post('city') ? ' value="' . \Input::post('city')
+          . '"' : '' ) ?>>
+        <div class="controls">
+          <input type="hidden" name="REQUEST_TOKEN" id="REQUEST_TOKEN" value="<?= REQUEST_TOKEN ?>">
+          <button type="submit" class="btn btn-primary" name="search_partner">HÄNDLER SUCHEN</button>
+        </div>
+      </form>
+      <?php endif; ?>
+      <?php $availability = false; ?>
+      <?php if(\Input::post('partner-type')):?>
+      <?php if ($this->objMembers): ?>
+      <h5 style="color:#c31632;" class="mt-4 mb-3">Ihr Hӓndler in der Nӓhe:</h5>
+      <div class="partner-all">
+        <div id="partner-details" class="partner-details pb-3"></div>
+        <?php foreach ($this->objMembers as $objMember): ?>
+        <?php if($objMember->memberline == 'GFH'): ?>
+        <?php $availability = true; ?>
+        <div class="patner-list premium py-2">
+          <div class="row">
+            <div class="col-lg-8 col-8 list-details">
+              <h6>
+                <?= $objMember->company ?>
+              </h6>
+              <p>
+                <?= $objMember->street ?>
+              </p>
+              <p>
+                <?= $objMember->postal ?>
+                <?= $objMember->city ?>
+              </p>
+            </div>
+            <div class="col-lg-4 col-4">
+              <img src="files/main_thema/resources/images/assets/HS_PremiumPartnerLogo.png" alt="Premium Partner">
+            </div>
+          </div>
+        </div>
+        <?php else: ?>
+        <?php $availability = true; ?>
+        <div class="patner-list premium py-2">
+          <div class="row">
+            <div class="col-lg-8 col-8 list-details">
+              <h6>
+                <?= $objMember->company ?>
+              </h6>
+              <p>
+                <?= $objMember->street ?>
+              </p>
+              <p>
+                <?= $objMember->postal ?>
+                <?= $objMember->city ?>
+              </p>
+            </div>
+          </div>
+        </div>
+        <?php endif; ?>
+        <?php endforeach; ?>     
+      </div>
+      <?php endif; ?>
+        <?php if(empty($this->objMembers['arrModels']) && $availability == false): ?>
+          <p>No dealer available near you.</p>
+        <?php endif; ?>   
+      <div class="new-search mt-4 text-center">
+        <a href="{{link_url::back}}" class="btn btn-primary">NEUE SUCHE</a>
+      </div>
+      <?php endif; ?>
+    </div>
+  </div>
+</div>
+<?php $partnerLoc = array(); ?>
+<?php $partnerLoc = json_encode($this->geocodes); ?>
+<?php $googleApiKey = $this->googleApiKey; ?>
+
+<script>
+
+  //map
+  var _conf = {};
+  var lang = 'en';
+  var borderdata = false;
+  var detailonly = true;
+  var lat = 47.49234;
+  var lng = 13.0365999;
+  var zoom = 5;
+  <?php if ($partnerLoc): ?> 
+  var mapdata = '<?php echo $partnerLoc ; ?>';
+  <?php else: ?>
+  var mapdata = '<?php echo "No partner available in this location"; ?>';
+  <?php endif; ?>
+</script>
+<script src="files/main_thema/resources/js/libs.min.js"></script>
+<script
+  src="https://maps.googleapis.com/maps/api/js?v=3&key=" . $googleApiKey . " &sensor=false"></script>
+<script src="files/main_thema/resources/js/markerclusterer.js"></script>
+<script src="files/main_thema/resources/js/map-handler.js"></script>
+<var id="REQUEST_TOKEN" style="display:none;">
+  <?= REQUEST_TOKEN ?>
+</var>

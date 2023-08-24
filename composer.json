@@ -1,0 +1,31 @@
+{
+    "name": "tahericreate/members-map-bundle",
+    "type": "contao-bundle",
+    "license": "LGPL-3.0-or-later",
+    "description": "Members Map Bundle.",
+    "keywords": [
+		"contao",
+		"theme",
+		"website",
+		"configuration",
+		"design",
+		"ui",
+		"ux"
+	],    
+	"version": "dev-main",
+    "require": {
+        "php": "^7.4 || ^8.0",
+        "contao/core-bundle": "^4.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "Tahericreate\\MembersMapBundle\\": "src/"
+        }
+    },
+    "extra": {
+        "contao-manager-plugin": "Tahericreate\\MembersMapBundle\\ContaoManager\\Plugin"
+    },
+    "config": {
+        "optimize-autoloader": true
+    }
+}
